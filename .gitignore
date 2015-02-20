@@ -1,4 +1,5 @@
 *egg-info/
+dist/
 *.log
 *.pyc
 *.egg
