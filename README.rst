@@ -10,6 +10,9 @@ http://www.human-phenotype-ontology.org/contao/index.php/downloads.html
 This is a project of the Centre for Comparative Genomics at Murdoch
 University.
 
+Some data used (in directory `contrib/PhenoTips`) is sourced from the 
+PhenoTips project (https://phenotips.org/).
+
 Licence
 -------
 
