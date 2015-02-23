@@ -1,8 +1,11 @@
+from lxml import etree as etree
 from rdflib import Graph
 from rdflib.term import URIRef
 from django.db import transaction
+import json
 
-from .models import Phenotype, PhenotypeSubclass, PhenotypeSynonym
+from .models import Phenotype, PhenotypeSubclass, PhenotypeSynonym, \
+        PhenotypeCategoryGrouping, PhenotypeCategory, PhenotypeCategoryMember
 
 import logging
 logger = logging.getLogger(__name__)
@@ -85,3 +88,32 @@ SELECT ?id ?rel ?syn
         if id in id_mapping:
             # logger.debug("  adding synonym for %s: %s" % (id, syn[:25]))
             PhenotypeSynonym.objects.get_or_create(phenotype_id=id_mapping[id], synonym=syn, type=typenum(rel))
+
+
+@transaction.atomic
+def load_phenotips_categories(filename):
+    def add_grouping(name):
+        obj, _ = PhenotypeCategoryGrouping.objects.get_or_create(name=name)
+        return obj
+
+    def add_category(grp, name, parent_id):
+        obj, _ = PhenotypeCategory.objects.get_or_create(name=name, grouping=grp, parent=parent_id)
+        return obj
+
+    def add_root_category(grp, obj):
+        assert(obj['type'] == 'section')
+        name = obj['title']
+        member_terms = obj['categories']
+        category = add_category(grp, name, None)
+        print(category)
+
+    with open(filename, 'rU') as fd:
+        et = etree.parse(fd)
+        text = et.xpath('//content/text()')[0]
+    groupings = json.loads(text)
+    for name in groupings:
+         grp = add_grouping(name)
+         for category in groupings[name]:
+             add_root_category(grp, category)
+
+

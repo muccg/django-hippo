@@ -5,7 +5,6 @@ from ...ontology import load_hp_owl, Phenotype
 
 
 class Command(BaseCommand):
-    args = 'hp.owl'
     help = 'Imports the HP in OWL format'
 
     option_list = BaseCommand.option_list + (

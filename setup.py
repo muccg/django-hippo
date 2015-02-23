@@ -4,6 +4,7 @@ import sys, os
 install_requires = [
     'Django>=1.7,<1.8',
     'rdflib==4.1.2',
+    'lxml'
 ]
 
 setup(name='django-hippo',

@@ -27,6 +27,21 @@ class PhenotypeSubclass(models.Model):
         return "%s > %s" % (self.parent.code, self.child.code)
 
 
+class PhenotypeCategoryGrouping(models.Model):
+    name = models.CharField(max_length=200)
+
+
+class PhenotypeCategory(models.Model):
+    grouping = models.ForeignKey(PhenotypeCategoryGrouping)
+    parent = models.ForeignKey('PhenotypeCategory', null=True)
+    name = models.CharField(max_length=200)
+
+
+class PhenotypeCategoryMember(models.Model):
+    category = models.ForeignKey(PhenotypeCategory)
+    phenotype = models.ForeignKey(Phenotype)
+
+
 class PhenotypeSynonym(models.Model):
     """
     This models the following relations of oboInOwl

@@ -1,0 +1,5 @@
+exclude .gitignore
+prune .git
+prune *.egg-info
+recursive-include hippo/contrib *
+exclude *~
