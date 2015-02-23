@@ -1,7 +1,7 @@
+from pkg_resources import resource_filename
 from optparse import make_option
 from django.core.management.base import BaseCommand
 from ...ontology import load_hp_owl, Phenotype
-from ...hpo_download import download_owl
 
 
 class Command(BaseCommand):
@@ -21,10 +21,5 @@ class Command(BaseCommand):
             self.stdout.write("Removing %d objects" % Phenotype.objects.count())
             Phenotype.objects.all().delete()
 
-        if len(args) > 0:
-            filename = args[0]
-        else:
-            fd = download_owl()
-            filename = fd.name
-
+        filename = resource_filename('hippo', 'contrib/HPO/hp.owl')
         load_hp_owl(filename)
