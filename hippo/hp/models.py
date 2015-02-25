@@ -30,11 +30,18 @@ class PhenotypeSubclass(models.Model):
 class PhenotypeCategoryGrouping(models.Model):
     name = models.CharField(max_length=200)
 
+    def __repr__ (self):
+        return self.name
+        return "<PhenoTypeCategoryGrouping:%s>" % self.name
+
 
 class PhenotypeCategory(models.Model):
     grouping = models.ForeignKey(PhenotypeCategoryGrouping)
     parent = models.ForeignKey('PhenotypeCategory', null=True)
     name = models.CharField(max_length=200)
+
+    def __str__ (self):
+        return "<PhenotypeCategory:%s>" % self.name
 
 
 class PhenotypeCategoryMember(models.Model):

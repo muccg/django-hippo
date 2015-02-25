@@ -100,20 +100,40 @@ def load_phenotips_categories(filename):
         obj, _ = PhenotypeCategory.objects.get_or_create(name=name, grouping=grp, parent=parent_id)
         return obj
 
-    def add_root_category(grp, obj):
-        assert(obj['type'] == 'section')
-        name = obj['title']
-        member_terms = obj['categories']
-        category = add_category(grp, name, None)
-        print(category)
+    def process_category(grp, category, parent=None):
+        name = category['title']
+        cat = add_category(grp, name, parent)
+        # the terms which make up this category
+        if 'categories' in category:
+            for hpo_term in category['categories']:
+                add_member(cat, find_hpo(hpo_term))
+        if 'id' in category:
+            add_member(cat, find_hpo(category['id']))
+        # process sub-sections
+        for subsection in category['data']:
+            if 'type' in subsection and subsection['type'] == 'subsection':
+                process_category(grp, subsection, cat)
+            else:
+                # inline sub-section
+                hpo = find_hpo(subsection['id'])
+                title = hpo.label
+                subcat = add_category(grp, title, cat)
+                add_member(subcat, hpo)
+
+    def add_member(cat, hpo):
+        obj, _ = PhenotypeCategoryMember.objects.get_or_create(category=cat, phenotype=hpo)
+        return obj
+
+    def find_hpo(term):
+        return Phenotype.objects.get(code=term)
 
     with open(filename, 'rU') as fd:
         et = etree.parse(fd)
         text = et.xpath('//content/text()')[0]
+
     groupings = json.loads(text)
     for name in groupings:
          grp = add_grouping(name)
          for category in groupings[name]:
-             add_root_category(grp, category)
-
+             process_category(grp, category)
 
