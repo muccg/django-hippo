@@ -37,5 +37,7 @@ require a licence other than LGPL for legal or commercial reasons.
 Latest Releases
 ---------------
 
-0.1.0  (TBD)
+0.2.0  (12th May 2015)
+
+  Initial usable release.
 
